@@ -1,0 +1,112 @@
+%include "utils/printf32.asm"
+extern printf
+
+section .data
+
+M dd 0x12121212
+mask db 0x12
+
+arr dd 0x12345678, 0x12121212, 0x42424242, 0x12771277, 0xCAFEBABE, 0x12001200, 0x20222022, 0x03020302, 0x12FF12FF, 0xFF12FF12
+len equ 10
+
+format1 db "%d", 10, 0
+format2 db "%d ", 0
+
+;TODO c: Declarati vectorul de intregi (double word) `res` cu dimensiunea egala cu `len`
+
+section .bss
+
+res resd len
+
+section .text
+global main
+
+extern printf
+
+main:
+    push ebp
+    mov ebp, esp
+
+    ; TODO a: Calculați și afișati numărul de biți `1` din numărul întreg `M`.
+    ; Numărul `M` este definit în secțiunea `.data`.
+    mov ecx, 1 ; mask
+    mov eax, [M]
+    xor ebx, ebx ; counter
+.loop1:
+    mov edx, ecx
+    and edx, eax
+    cmp edx, 0
+    je main.no_add
+    inc ebx
+.no_add:
+    shl ecx, 1
+    cmp ecx, 0
+    ja main.loop1
+
+    push ebx
+    push format1
+    call printf
+    add esp, 8
+
+    ; TODO b: Calculați și afișati numărul de octeți egali cu `mask` din numărul întreg `M`.
+    ; Numerele `M` și `mask` sunt definite în secțiunea `data`
+
+    mov eax, [M]
+    xor ebx, ebx ; counter
+.loop2:
+    mov cl, [mask]
+    xor cl, al
+    cmp cl, 0
+    jne main.no_add2
+    inc ebx
+.no_add2:
+    shr eax, 8
+    cmp eax, 0
+    ja main.loop2
+
+    push ebx
+    push format1
+    call printf
+    add esp, 8
+
+    ; TODO c: Completați vectorul `res` de dimensiune `len` astfel:
+    ;   - fiecare element res[i] este egal cu numărul de octeți din arr[i] ce au valoarea `mask`
+
+    xor ecx, ecx ; indeex
+.loop3:
+    mov eax, [arr + 4 * ecx]
+    xor ebx, ebx  ; counter for current
+.loop4:
+    mov dl, [mask]
+    xor dl, al
+    cmp dl, 0
+    jne main.diff
+    inc ebx
+.diff:
+    shr eax, 8
+    cmp eax, 0
+    ja main.loop4
+    mov [res + 4 * ecx], ebx  ; add to res and continue loop
+    inc ecx
+    cmp ecx, len
+    jb main.loop3
+    
+    ; TODO d: Afișați vectorul `res` de dimensiunea `len` completat cu elementele definite la punctul c)
+    xor ecx, ecx
+.loop5:
+    mov eax, [res + 4 * ecx]
+    push ecx
+    push eax
+    push format2
+    call printf
+    add esp, 8
+    pop ecx
+    inc ecx
+    cmp ecx, len
+    jb main.loop5
+    
+
+    ; Return 0.
+    xor eax, eax
+    leave
+    ret

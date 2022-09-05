@@ -1,0 +1,9 @@
+Recomandat sa le sortezi crescator lexicografic in view-ul din care le privesti
+Si sa le parcurgi in ordine crescatoare:
+(1_2022_14iun_NOC_v1,
+ 2_2022, ...).
+
+NOC = nu stim seria.
+NOdate = nu stim data.
+NOv = nu stim varianta.
+NOenunt = nu are poza cu enunt.
